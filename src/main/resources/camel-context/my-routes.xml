@@ -40,6 +40,18 @@
         <route id="hello2">
             <from uri="cxfrs:bean:restService?bindingStyle=Default"/>
             <log message="******************** invoked *********************"/>
+            <setExchangePattern pattern="InOut"/>
+
+            <choice>
+            <when>
+            <simple>${header.operationName} == 'getDetails'</simple>
+
+            <convertBodyTo type="com.spring.boot.camel.example.Student"/>
+            <to uri="validator:/src/main/resources/xsd/test.xsd"/>
+
+            </when>
+            </choice>
+
             <transform>
                 <method ref="myBean" method="returnSomething"/>
             </transform>

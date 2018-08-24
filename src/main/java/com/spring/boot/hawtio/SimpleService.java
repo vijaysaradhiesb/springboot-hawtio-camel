@@ -1,5 +1,6 @@
 package com.spring.boot.hawtio;
 
+import com.spring.boot.camel.example.Student;
 import org.apache.camel.Body;
 import org.apache.camel.Header;
 
@@ -9,11 +10,10 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 public interface SimpleService {
 
-    String hello(String greeting);
     @GET
     @Path("/getDetails/{identifier}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    String getDetails(@PathParam("identifier") @Header("identifier") String identifier);
+    Student getDetails(@PathParam("identifier") @Header("identifier") String identifier);
 
 
     @POST

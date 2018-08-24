@@ -20,7 +20,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @EnableHawtio
-@ImportResource("classpath:my-routes.xml")
+@ImportResource("classpath:camel-context/my-routes.xml")
 public class SampleApplication {
     @Autowired
     private ServletContext servletContext;
