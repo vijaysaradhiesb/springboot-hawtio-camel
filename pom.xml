@@ -14,14 +14,11 @@
     <artifactId>springboot-hawtio-camel</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
-
-
     <properties>
         <java.version>1.8</java.version>
         <spring-boot-starter-parent.version>1.3.5.RELEASE</spring-boot-starter-parent.version>
         <camel.version>2.17.3</camel.version>
         <hawtio.version>1.4.64</hawtio.version>
-
         <jackson.version>2.8.10</jackson.version>
         <cxf.version>3.2.4</cxf.version>
     </properties>
@@ -46,6 +43,11 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
             <version>3.1.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <version>${camel.version}</version>
         </dependency>
 
         <dependency>
@@ -115,14 +117,14 @@
                         <configuration>
                             <schemaDirectory>src/main/resources/xsd/</schemaDirectory>
                             <schemaIncludes>
-                                <include>test.xsd</include>
+                                <include>declaration.xsd</include>
                             </schemaIncludes>
                             <!--<bindingDirectory>src/main/resources/xjc</bindingDirectory>
                             <bindingIncludes>
-                                <include>test.xjb</include>
+                                <include>declaration.xjb</include>
                             </bindingIncludes>-->
                             <generateDirectory>target/generated-sources</generateDirectory>
-                            <generatePackage>com.spring.boot.camel.example</generatePackage>
+                            <generatePackage>uk.customs.declaration.beans</generatePackage>
                             <!-- For including equals,hashcode and toString methods in generated code -->
                             <!--<plugins>
                                 <plugin>

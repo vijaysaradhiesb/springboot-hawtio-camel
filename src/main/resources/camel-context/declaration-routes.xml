@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+        http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.customs.declaration"/>
+    <camelContext id="DeclarationServiceContext" xmlns="http://camel.apache.org/schema/spring">
+        <streamCaching id="declStreamCaching" bufferSize="16384" spoolDirectory="./data/declaration"
+                       spoolThreshold="256000"/>
+
+        <route id="declaration-route">
+            <from uri="cxfrs:bean:restService?bindingStyle=Default"/>
+            <setExchangePattern pattern="InOut"/>
+            <choice>
+                <when>
+                    <simple>${header.operationName} == 'getDetails' and ${header.identifier} == '1234'</simple>
+                    <log message="******************** getDetails invoked *********************"/>
+                    <bean ref="transformer" method="sendDeclarationDetails"/>
+                    <!--<setBody>
+                        <spel>#{new uk.customs.declaration.beans.Declaration()
+                                       .setFirstName("firstName")
+                                       .setLastName("lastName")
+                                       .setAddress("address")
+                                       .setProductCode("product code")
+                                      }
+                        </spel>
+                    </setBody>-->
+                </when>
+                <when>
+                    <simple>${header.operationName} == 'declaration'</simple>
+                    <log message="******************** declaration invoked *********************"/>
+                    <convertBodyTo type="uk.customs.declaration.beans.Declaration"/>
+                    <!--<to uri="validator:file:src/main/resources/xsd/declaration.xsd"/>-->
+                    <!--<to uri="xslt:src/main/resources/xslt/declaration.xslt"/>-->
+                    <bean ref="transformer" method="sendDeclarationResponse"/>
+                    <!--<setBody>
+                        <spel>#{ new uk.customs.declaration.beans.DeclarationResponse()
+                                       .setStatus("OK")
+                               }
+                        </spel>
+                    </setBody>-->
+                </when>
+                <otherwise>
+                    <log loggingLevel="ERROR" message="******* unknown body *****"/>
+                </otherwise>
+            </choice>
+        </route>
+
+    </camelContext>
+</beans>

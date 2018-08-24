@@ -1,0 +1,9 @@
+{
+  "identifier": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "dob": "2008-09-29",
+  "address": "string",
+  "productCode": "string",
+  "productDetails": "string"
+}
