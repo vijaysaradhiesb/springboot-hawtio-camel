@@ -1,11 +1,9 @@
 package com.spring.boot.hawtio;
 
+import org.apache.camel.Body;
 import org.apache.camel.Header;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/")
@@ -18,6 +16,11 @@ public interface SimpleService {
     String getDetails(@PathParam("identifier") @Header("identifier") String identifier);
 
 
+    @POST
+    @Path("/notifyEvent")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    Object notifyClaim(@Body Object object);
 }
 
 

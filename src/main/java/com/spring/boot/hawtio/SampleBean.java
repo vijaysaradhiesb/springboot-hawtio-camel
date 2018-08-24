@@ -19,4 +19,11 @@ public class SampleBean {
         return say;
     }
 
+    @Value("${identifier}")
+    private String identifier;
+
+    public String returnSomething() {
+        return identifier;
+    }
+
 }
