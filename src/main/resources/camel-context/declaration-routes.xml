@@ -23,10 +23,10 @@
                     <bean ref="transformer" method="sendDeclarationDetails"/>
                     <!--<setBody>
                         <spel>#{new uk.customs.declaration.beans.Declaration()
-                                       .setFirstName("firstName")
-                                       .setLastName("lastName")
-                                       .setAddress("address")
-                                       .setProductCode("product code")
+                                       .withFirstName("firstName")
+                                       .withLastName("lastName")
+                                       .withAddress("address")
+                                       .withProductCode("product code")
                                       }
                         </spel>
                     </setBody>-->
@@ -40,7 +40,7 @@
                     <bean ref="transformer" method="sendDeclarationResponse"/>
                     <!--<setBody>
                         <spel>#{ new uk.customs.declaration.beans.DeclarationResponse()
-                                       .setStatus("OK")
+                                       .withStatus("OK")
                                }
                         </spel>
                     </setBody>-->
