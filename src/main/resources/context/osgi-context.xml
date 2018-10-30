@@ -1,0 +1,26 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+		   http://www.springframework.org/schema/osgi-compendium
+		   http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+		   http://www.springframework.org/schema/context
+		   http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/osgi
+           http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+    <context:property-placeholder properties-ref="props"/>
+
+    <osgi:reference id="ariesTransactionManager" interface="javax.transaction.TransactionManager"/>
+
+    <osgi:reference id="singleXAConnectionFactory" filter="(hubio.conn.jms.name=${jms.instance})">
+        <osgi:interfaces>
+            <value>javax.jms.ConnectionFactory</value>
+            <value>javax.jms.QueueConnectionFactory</value>
+            <value>javax.jms.TopicConnectionFactory</value>
+        </osgi:interfaces>
+    </osgi:reference>
+</beans>

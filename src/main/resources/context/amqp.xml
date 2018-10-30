@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- RabbitMQ-->
+    <bean id="customConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+        <property name="host" value="localhost"/>
+        <property name="port" value="5672"/>
+        <property name="username" value="admin"/>
+        <property name="password" value="itSgIr5lHV0H"/>
+    </bean>
+
+    <!-- ActiveMQ Artemis-->
+    <bean id="artemisConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQJMSConnectionFactory">
+        <constructor-arg index="0" value="tcp://localhost:61616"/>
+    </bean>
+    <bean id="artemis" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory" ref="artemisConnectionFactory"/>
+    </bean>
+
+
+    <!--<bean id="jmstx" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="connectionFactory" ref="singleXAConnectionFactory"/>
+        <property name="deliveryPersistent" value="true"/>
+        <property name="concurrentConsumers" value="${jms.concurrentConsumers}"/>
+        <property name="cacheLevelName" value="${jms.cache.connection:CACHE_CONNECTION}"/>
+    </bean> -->
+
+</beans>

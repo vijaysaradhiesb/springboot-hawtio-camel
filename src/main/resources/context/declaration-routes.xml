@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+        http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.customs.declaration"/>
+    <camelContext id="DeclarationServiceContext" xmlns="http://camel.apache.org/schema/spring">
+        <streamCaching enabled="true" id="declStreamCaching" bufferSize="16384" spoolDirectory="./data/declarationDAO"
+                       spoolThreshold="256000"/>
+
+        <route id="declaration-route">
+            <from uri="cxfrs:bean:declarationService?bindingStyle=Default"/>
+            <setExchangePattern pattern="InOut"/>
+            <choice>
+                <when>
+                    <simple>${header.operationName} == 'getDeclarationDetails' and ${header.identifier} == '1234'</simple>
+                    <log message="******************** getDeclarationDetails invoked *********************"/>
+                    <bean ref="transformer" method="sendDeclarationDetails"/>
+                    <!--<setBody>
+                        <spel>#{new uk.customs.declaration.beans.Declaration()
+                                       .withFirstName("firstName")
+                                       .withLastName("lastName")
+                                       .withAddress("address")
+                                       .withProductCode("product code")
+                                      }
+                        </spel>
+                    </setBody>-->
+                </when>
+                <when>
+                    <simple>${header.operationName} == 'persistDeclaration'</simple>
+                    <log message="******************** persistDeclaration invoked *********************"/>
+                    <convertBodyTo type="uk.customs.declaration.beans.Declaration"/>
+                    <!--<to uri="validator:file:src/main/resources/xsd/declaration.xsd"/>
+                    <to uri="xslt:src/main/resources/xslt/declaration.xslt"/>-->
+                    <bean ref="declarationMapper" method="processData"/>
+                    <to uri="sqlComponent:{{sql.persistDeclaration}}"/>
+                    <bean ref="transformer" method="sendDeclarationResponse"/>
+                    <!--<setBody>
+                        <spel>#{ new uk.customs.declaration.beans.DeclarationResponse()
+                                       .withStatus("OK")
+                               }
+                        </spel>
+                    </setBody>-->
+                </when>
+                <when>
+                    <simple>${header.operationName} == 'publishActiveMQ'</simple>
+                    <setExchangePattern pattern="InOnly"/>
+                    <log message="******************** publishActiveMQ invoked *********************"/>
+                    <convertBodyTo type="uk.customs.declaration.beans.Declaration"/>
+                    <bean ref="transformer" method="convert"/> <!-- Workaround as its not a serialized object-->
+                    <to uri="artemis:queue:DECLARATIONS_QUEUE?jmsMessageType=Text"/>
+                    <bean ref="transformer" method="sendDeclarationResponse"/>
+                </when>
+                <when>
+                    <simple>${header.operationName} == 'publishRabbitMQ'</simple>
+                    <setExchangePattern pattern="InOnly"/>
+                    <log message="******************** publishRabbitMQ invoked *********************"/>
+                    <convertBodyTo type="uk.customs.declaration.beans.Declaration"/>
+                    <bean ref="transformer" method="convert"/> <!-- Workaround as its not a serialized object-->
+                    <to uri="rabbitmq://localhost:5672/amq.direct?connectionFactory=#customConnectionFactory&amp;routingKey=camel&amp;queue=DECLARATIONS_QUEUE"/>
+                    <bean ref="transformer" method="sendDeclarationResponse"/>
+                </when>
+                <otherwise>
+                    <log loggingLevel="ERROR" message="******* unknown body *****"/>
+                </otherwise>
+            </choice>
+        </route>
+
+        <route id="amqpRoute" autoStartup="true">
+            <from uri="jmstx:queue:message.service.request"/>
+            <transacted ref="PROPAGATION_MANDATORY"/>
+            <setExchangePattern pattern="InOnly"/>
+        </route>
+
+
+    </camelContext>
+</beans>

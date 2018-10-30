@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:core="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://camel.apache.org/schema/cxf
+            http://camel.apache.org/schema/cxf/camel-cxf.xsd
+            http://cxf.apache.org/core
+            http://cxf.apache.org/schemas/core.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- CXF RS Stuff-->
+    <cxf:rsServer id="declarationService" address="${esb.service.address}"
+                  serviceClass="com.customs.declaration.rest.DeclarationService"
+                  bus="gatewayCxfBus">
+        <cxf:providers>
+            <ref bean="jacksonJaxbJsonProvider"/>
+            <bean id="jaxbElementProvider"
+                  class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
+                <property name="singleJaxbContext" value="true"/>
+                <property name="extraClass" ref="declarationClasses"/>
+            </bean>
+        </cxf:providers>
+        <cxf:features>
+            <core:logging/>
+            <bean class="org.apache.cxf.transport.common.gzip.GZIPFeature"/>
+        </cxf:features>
+    </cxf:rsServer>
+
+    <!-- Default Json provider has been disabled to be able to handle both json and xml-->
+    <core:bus bus="gatewayCxfBus">
+        <core:properties>
+            <entry key="skip.default.json.provider.registration" value="true"/>
+        </core:properties>
+    </core:bus>
+
+    <bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <bean id="jacksonJaxbJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+        <constructor-arg ref="objectMapper"/>
+    </bean>
+    <util:list id="declarationClasses">
+        <value>uk.customs.declaration.beans.DeclarationResponse</value>
+        <value>uk.customs.declaration.beans.Declaration</value>
+    </util:list>
+
+    <bean id="transformer" class="com.customs.declaration.transformer.DeclarationTransformer"/>
+
+</beans>
