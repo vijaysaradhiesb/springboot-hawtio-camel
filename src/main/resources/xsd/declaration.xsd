@@ -16,6 +16,7 @@
     <xs:element name="DeclarationResponse">
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="id" type="xs:string"/>
                 <xs:element name="status" type="xs:string"/>
                 <xs:element name="processedDate" type="xs:dateTime"/>
 

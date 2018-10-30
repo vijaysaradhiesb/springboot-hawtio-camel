@@ -16,11 +16,12 @@ import org.springframework.context.annotation.ImportResource;
 
 /**
  * Declaration Application launch
- *
+ * Author : Vijay Saradhi
  */
+
 @SpringBootApplication
 @EnableHawtio
-@ImportResource("classpath:camel-context/*.xml")
+@ImportResource("classpath:context/*.xml")
 public class DeclarationApplication {
     @Autowired
     private ServletContext servletContext;

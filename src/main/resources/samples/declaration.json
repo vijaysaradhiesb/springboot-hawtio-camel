@@ -1,9 +1,8 @@
 {
-  "identifier": "string",
-  "firstName": "string",
-  "lastName": "string",
-  "dob": "2008-09-29",
-  "address": "string",
-  "productCode": "string",
-  "productDetails": "string"
+  "identifier": "12345",
+  "firstName": "Mr Vijay",
+  "lastName": "Saradhi",
+  "address": "Southend-on-sea, England",
+  "productCode": "MI7",
+  "productDetails": "Secret Products"
 }
